@@ -68,13 +68,15 @@ def assignTents(tentsAvailable, campers):
     tentsWithCampers = {}
 
     for tent in tentsAvailable:
+        campersPerTent = []
         while tentsAvailable[tent] > 0:
             camper = random.choice(campers)
             tentsAvailable[tent] -= 1
+            campersPerTent.append(camper)
             campers.remove(camper)
-            tentsWithCampers[camper] = tent
 
-    print(tentsWithCampers)
+        tentsWithCampers[tent] = campersPerTent
+
     return tentsWithCampers
 
 
@@ -83,6 +85,7 @@ def calculateHappiness(campersInTents, tents):
     # check each camper's happiness based on tents occupants
     happiness = 0
 
+    print(campersInTents)
     print(tents)
 
     return 0
@@ -92,6 +95,8 @@ def main():
     campers = getCamperNames()
     tents = getTentConfigurations()
     score = 0
+
+    print(tents)
 
     tentsWithCampers = assignTents(tents, campers)
 
