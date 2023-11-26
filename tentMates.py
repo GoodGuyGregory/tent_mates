@@ -85,10 +85,26 @@ def calculateHappiness(campersInTents, tents):
     # check each camper's happiness based on tents occupants
     happiness = 0
 
-    print(campersInTents)
-    print(tents)
+    # per tent check the happiness of the occupants. add to happiness
+    for occupants in campersInTents.values():
+        ## check the other occupants preference
+        for camper in occupants:
+            happiness += getCamperAttitude(camper, occupants)
+    return happiness
 
-    return 0
+
+# check each other camper's preference fpr each camper in the tent
+def getCamperAttitude(camper, occupants):
+    camperHappiness = 0
+    camperPreferences = tentPrefsDf[tentPrefsDf[0] == camper]
+
+    for i in range(len(occupants)):
+        if occupants[i] != camper:
+            camperHappiness += camperPreferences[camperPreferences[1] == occupants[i]][
+                2
+            ]
+
+    return camperHappiness
 
 
 def main():
@@ -96,11 +112,9 @@ def main():
     tents = getTentConfigurations()
     score = 0
 
-    print(tents)
-
-    tentsWithCampers = assignTents(tents, campers)
-
-    score = calculateHappiness(tentsWithCampers, tents.keys())
+    while score < 175:
+        tentsWithCampers = assignTents(tents, campers)
+        score = calculateHappiness(tentsWithCampers, tents.keys())
 
 
 main()
