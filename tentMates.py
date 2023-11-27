@@ -36,31 +36,31 @@ def getTentConfigurations():
 
     return tents
 
+def getDislikedCampers(campers, camper)
+    highAffinityPersons = tentPrefsDf[tentPrefsDf[2] >= 5]
 
-# highAffinityPersons = tentPrefsDf[tentPrefsDf[2] >= 5]
+    for camper in campers:
+        print(tentPrefsDf.loc[tentPrefsDf[1] == name])
 
-# for name in names:
-#     print(tentPrefsDf.loc[tentPrefsDf[1] == name])
+    # combinations of people that should be avoided...
+    lowAffinityPersons = tentPrefsDf[tentPrefsDf[2] == 0]
+    troubleMakers = {}
+    haters = []
+    dislikes = []
+    for hater in lowAffinityPersons[0]:
+        haters.append(hater)
 
-# combinations of people that should be avoided...
-# lowAffinityPersons = tentPrefsDf[tentPrefsDf[2] == 0]
-# troubleMakers = {}
-# haters = []
-# dislikes = []
-# for hater in lowAffinityPersons[0]:
-#     haters.append(hater)
-
-# for disliked in lowAffinityPersons[1]:
-#     dislikes.append(disliked)
-
-
-# dislikedIndex = 0
-# for hater in haters:
-#     troubleMakers[hater] = dislikes[dislikedIndex]
-#     dislikedIndex += 1
+    for disliked in lowAffinityPersons[1]:
+        dislikes.append(disliked)
 
 
-# print(troubleMakers)
+    dislikedIndex = 0
+    for hater in haters:
+        troubleMakers[hater] = dislikes[dislikedIndex]
+        dislikedIndex += 1
+
+
+    print(troubleMakers)
 
 
 # assigns tents to each camper with a mild heuristic for affinity
@@ -71,9 +71,19 @@ def assignTents(tentsAvailable, campers):
         campersPerTent = []
         while tentsAvailable[tent] > 0:
             camper = random.choice(campers)
-            tentsAvailable[tent] -= 1
-            campersPerTent.append(camper)
+            if len(campersPerTent) > 0:
+                # calculate the lovers and fighters within the tent
+                # fighters:
+                # people to not put in the same tent:
+                fighters = getDislikedCampers()
+
+                lovers = getLovedCampers(camp)
+            else:
+                # just assign as no-one is in the tent
+                campersPerTent.append(camper)
+
             campers.remove(camper)
+            tentsAvailable[tent] -= 1
 
         tentsWithCampers[tent] = campersPerTent
 
@@ -89,7 +99,9 @@ def calculateHappiness(campersInTents, tents):
     for occupants in campersInTents.values():
         ## check the other occupants preference
         for camper in occupants:
+            print(getCamperAttitude(camper, occupants))
             happiness += getCamperAttitude(camper, occupants)
+
     return happiness
 
 
@@ -100,9 +112,9 @@ def getCamperAttitude(camper, occupants):
 
     for i in range(len(occupants)):
         if occupants[i] != camper:
-            camperHappiness += camperPreferences[camperPreferences[1] == occupants[i]][
-                2
-            ]
+            score = camperPreferences[camperPreferences[1] == occupants[i]][2].tolist()
+            if len(score) > 0:
+                camperHappiness += score[0]
 
     return camperHappiness
 
@@ -115,6 +127,7 @@ def main():
     while score < 175:
         tentsWithCampers = assignTents(tents, campers)
         score = calculateHappiness(tentsWithCampers, tents.keys())
+        print(score)
 
 
 main()
