@@ -36,11 +36,10 @@ def getTentConfigurations():
 
     return tents
 
-def getDislikedCampers(campers, camper)
-    highAffinityPersons = tentPrefsDf[tentPrefsDf[2] >= 5]
 
+def getDislikedCampers(campers, camper):
     for camper in campers:
-        print(tentPrefsDf.loc[tentPrefsDf[1] == name])
+        print(tentPrefsDf.loc[tentPrefsDf[1] == camper])
 
     # combinations of people that should be avoided...
     lowAffinityPersons = tentPrefsDf[tentPrefsDf[2] == 0]
@@ -53,14 +52,35 @@ def getDislikedCampers(campers, camper)
     for disliked in lowAffinityPersons[1]:
         dislikes.append(disliked)
 
+    dislikedIndex = 0
+    for hater in haters:
+        troubleMakers[hater] = dislikes[dislikedIndex]
+        dislikedIndex += 1
+
+    return haters
+
+
+def getLovedCampers(campers, camper):
+    for camper in campers:
+        print(tentPrefsDf.loc[tentPrefsDf[1] == camper])
+
+    # combinations of people that shouldn't be avoided...
+    highAffinityPersons = tentPrefsDf[tentPrefsDf[2] >= 5]
+    troubleMakers = {}
+    lovers = []
+    dislikes = []
+    for lover in highAffinityPersons[0]:
+        lovers.append(hater)
+
+    for disliked in lowAffinityPersons[1]:
+        dislikes.append(disliked)
 
     dislikedIndex = 0
     for hater in haters:
         troubleMakers[hater] = dislikes[dislikedIndex]
         dislikedIndex += 1
 
-
-    print(troubleMakers)
+    return haters
 
 
 # assigns tents to each camper with a mild heuristic for affinity
