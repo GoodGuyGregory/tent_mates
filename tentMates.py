@@ -1,6 +1,7 @@
 import pandas as pd
 import random
 import copy
+import pprint
 
 # read the tents-preference list csv
 tentPrefsDf = pd.read_csv("tents-prefs.csv", header=None)
@@ -125,16 +126,31 @@ def swapForHappierCampers(campersWithTents, campers):
         # check each occupant and look for their favorite person.. 8 <= value
         lovedCampers = getLovedCampers(campers, camper)
         # if any(likedCamper in lovedCampers for likedCamper in tentsWithCampers[likedCamper]):
+
         for k, v in campersWithTents.items():
             if k in lovedCampers:
                 if v not in campersTent:
                     oldTent = campersWithTents[k]
                     campersWithTents[k] = campersTent
                     # find all people with the campers tent.
-                    otherCampersSameTent = list(campersWithTents.keys())[list(campersWithTents.values()).index(campersTent)]
-                    campersToSwap = [person for person in otherCampersSameTent if person not in lovedCampers]
-                    camperToSwap = random.choice(campersToSwap)
-                    campersWithTents[camperToSwap] = oldTent
+                    otherCampersSameTent = otherCampersInTent = [
+                        p
+                        for p, t in campersWithTents.items()
+                        if (t == campersTent) and (p != camper)
+                    ]
+                    if len(otherCampersSameTent) > 1:
+                        campersToSwap = [
+                            person
+                            for person in otherCampersSameTent
+                            if person not in lovedCampers
+                        ]
+                        if len(campersToSwap) > 0:
+                            camperToSwap = random.choice(campersToSwap)
+                            campersWithTents[camperToSwap] = oldTent
+                        else:
+                            continue
+                    else:
+                        campersWithTents[otherCampersSameTent[0]] = oldTent
 
     return campersWithTents
 
@@ -181,9 +197,10 @@ def main():
 
     while score < 175:
         swapForHappierCampers(campersWithTents, campers)
+        score = calculateHappiness(campersWithTents, tents.keys())
 
     print(score)
-    print(campersWithTents)
+    pprint.pprint(campersWithTents)
 
 
 main()
