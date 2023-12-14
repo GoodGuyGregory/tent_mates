@@ -100,7 +100,8 @@ def assignTents(tentsAvailable, campers):
                 fighters = getDislikedCampers(referenceList, camper)
 
                 if any(x in fighters for x in campersPerTent):
-                    lessAgressiveCampers = [i for i in campers if i not in fighters]
+                    excludedCamper = [person != camper for person in campers]
+                    lessAgressiveCampers = [i not in fighters for i in excludedCamper]
                     choosenCamper = random.choice(lessAgressiveCampers)
                     campersWithTents[camper] = tent
                     campersPerTent.append(choosenCamper)
